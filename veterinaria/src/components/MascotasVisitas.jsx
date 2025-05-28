@@ -1,46 +1,56 @@
-import React from 'react';
-import DashboardCard from './DashboardCard';
+import React, { useState } from 'react';
 
-const MascotasCard = ({ mascotas, loading }) => {
-  const renderMascota = (mascota) => (
-    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-      <div>
-        <p className="font-medium text-gray-900">{mascota.nombre}</p>
-        <p className="text-sm text-gray-600">{mascota.tipo} • {mascota.propietario}</p>
-      </div>
-      <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-        {mascota.total_visitas} visitas
-      </span>
-    </div>
-  );
+const MascotasVisitas = () => {
+  const [mascotas, setMascotas] = useState([]);
+  const [nuevaMascota, setNuevaMascota] = useState('');
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
-  if (loading) {
-    return (
-      <div className="bg-white rounded-lg shadow-sm border p-6">
-        <div className="animate-pulse">
-          <div className="flex items-center mb-4">
-            <div className="w-8 h-8 bg-gray-200 rounded mr-3"></div>
-            <div className="h-6 bg-gray-200 rounded w-48"></div>
-          </div>
-          <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-16 bg-gray-100 rounded-lg"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const handleAddMascota = async (e) => {
+    e.preventDefault();
+    const response = await fetch(`${API_BASE_URL}/mascotas/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre: nuevaMascota })
+    });
+    if (response.ok) {
+      const mascotaCreada = await response.json();
+      setMascotas([...mascotas, mascotaCreada]);
+      setNuevaMascota('');
+    }
+  };
+
+  const handleDeleteMascota = async (id) => {
+    const response = await fetch(`${API_BASE_URL}/mascotas/${id}/`, {
+      method: 'DELETE'
+    });
+    if (response.ok) {
+      setMascotas(mascotas.filter(m => m.id !== id));
+    }
+  };
 
   return (
-    <DashboardCard
-      title="Mascotas con Más Visitas"
-      icon="🐕"
-      data={mascotas}
-      emptyMessage="No hay mascotas registradas"
-      renderItem={renderMascota}
-    />
+    <div>
+      <h2>Mascotas</h2>
+      <form onSubmit={handleAddMascota}>
+        <input
+          type="text"
+          value={nuevaMascota}
+          onChange={e => setNuevaMascota(e.target.value)}
+          placeholder="Nombre de la mascota"
+          required
+        />
+        <button type="submit">Agregar Mascota</button>
+      </form>
+      <ul>
+        {mascotas.map(mascota => (
+          <li key={mascota.id}>
+            {mascota.nombre}
+            <button onClick={() => handleDeleteMascota(mascota.id)}>Eliminar</button>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
 
-export default MascotasCard;
+export default MascotasVisitas;

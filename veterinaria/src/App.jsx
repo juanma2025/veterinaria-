@@ -201,8 +201,7 @@ function App() {
           <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col sm:flex-row justify-between items-center">
             <h1 className="text-3xl font-bold text-gray-900">🏥 Dashboard Veterinaria</h1>
             <nav className="flex gap-4 mt-4 sm:mt-0">
-              <Link to="/" className="text-blue-700 hover:underline font-medium">Dashboard</Link>
-              <Link to="/mascotas" className="text-blue-700 hover:underline font-medium">Mascotas</Link>
+              <Link to="/" className="text-blue-700 hover:underline font-medium">Mascotas</Link>
               <Link to="/vacunas" className="text-blue-700 hover:underline font-medium">Vacunas</Link>
               <Link to="/propietarios" className="text-blue-700 hover:underline font-medium">Propietarios</Link>
               <Link to="/servicios" className="text-blue-700 hover:underline font-medium">Servicios</Link>
@@ -211,12 +210,10 @@ function App() {
         </header>
         <main className="max-w-7xl mx-auto px-4 py-8">
           <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/mascotas" element={<MascotasVisitas />} />
+            <Route path="/" element={<MascotasVisitas />} />
             <Route path="/vacunas" element={<VacunasporTipo />} />
             <Route path="/propietarios" element={<Propietarios />} />
             <Route path="/servicios" element={<Servicios />} />
-            {/* Puedes agregar más rutas aquí */}
           </Routes>
         </main>
       </div>

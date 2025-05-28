@@ -1,7 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardCard from './DashboardCard';
 
-const VacunasCard = ({ vacunas, loading }) => {
+const VacunasporTipo = ({ vacunas: initialVacunas, loading }) => {
+  const [vacunas, setVacunas] = useState(initialVacunas || []);
+  const [nuevaVacuna, setNuevaVacuna] = useState('');
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+
+  const handleAddVacuna = async (e) => {
+    e.preventDefault();
+    const response = await fetch(`${API_BASE_URL}/vacunas/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre: nuevaVacuna })
+    });
+    if (response.ok) {
+      const vacunaCreada = await response.json();
+      setVacunas([...vacunas, vacunaCreada]);
+      setNuevaVacuna('');
+    }
+  };
+
+  const handleDeleteVacuna = async (id) => {
+    const response = await fetch(`${API_BASE_URL}/vacunas/${id}/`, {
+      method: 'DELETE'
+    });
+    if (response.ok) {
+      setVacunas(vacunas.filter(v => v.id !== id));
+    }
+  };
+
   const renderVacuna = (vacuna) => (
     <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
       <span className="font-medium text-gray-900 capitalize">
@@ -42,4 +69,4 @@ const VacunasCard = ({ vacunas, loading }) => {
   );
 };
 
-export default VacunasCard;
+export default VacunasporTipo;
